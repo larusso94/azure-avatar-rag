@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Avatar - Talking Avatar Service Demo</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    <link href="./css/styles.css" rel="stylesheet">
+    <script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
+    <script src="./js/basic.js"></script>
+    <script src="./js/rag.js"></script>
+</head>
+<body>
+<h1>🤖 Azure Talking Avatar with RAG</h1>
+
+<div id="configuration" style="display: block;">
+  <!-- Azure Speech credentials - Update these with your own values -->
+  <input id="region" type="hidden" value="YOUR_AZURE_REGION" />
+  <input id="APIKey" type="hidden" value="YOUR_AZURE_SPEECH_KEY" />
+  <input id="enablePrivateEndpoint" type="hidden" value="false" />
+  <input id="privateEndpoint" type="hidden" value="" />
+  <input id="customVoiceEndpointId" type="hidden" value="" />
+
+  <h2 style="background-color: white; width: 300px;">TTS Configuration</h2>
+  <label style="font-size: medium;" for="ttsVoice">TTS Voice:</label>
+  <select id="ttsVoice" style="font-size: medium; min-width: 300px;">
+    <optgroup label="🇺🇸 English (US) - Multilingual">
+      <option value="en-US-AvaMultilingualNeural" selected>Ava (Female, Multilingual)</option>
+      <option value="en-US-AndrewMultilingualNeural">Andrew (Male, Multilingual)</option>
+      <option value="en-US-EmmaMultilingualNeural">Emma (Female, Multilingual)</option>
+      <option value="en-US-BrianMultilingualNeural">Brian (Male, Multilingual)</option>
+    </optgroup>
+    <optgroup label="🇺🇸 English (US) - Standard">
+      <option value="en-US-AriaNeural">Aria (Female)</option>
+      <option value="en-US-GuyNeural">Guy (Male)</option>
+      <option value="en-US-JennyNeural">Jenny (Female)</option>
+      <option value="en-US-DavisNeural">Davis (Male)</option>
+      <option value="en-US-AmberNeural">Amber (Female)</option>
+      <option value="en-US-TonyNeural">Tony (Male)</option>
+    </optgroup>
+    <optgroup label="🇬🇧 English (UK)">
+      <option value="en-GB-SoniaNeural">Sonia (Female)</option>
+      <option value="en-GB-RyanNeural">Ryan (Male)</option>
+      <option value="en-GB-LibbyNeural">Libby (Female)</option>
+    </optgroup>
+    <optgroup label="🇦🇺 English (Australia)">
+      <option value="en-AU-NatashaNeural">Natasha (Female)</option>
+      <option value="en-AU-WilliamNeural">William (Male)</option>
+    </optgroup>
+    <optgroup label="🇪🇸 Spanish (Spain)">
+      <option value="es-ES-ElviraNeural">Elvira (Female)</option>
+      <option value="es-ES-AlvaroNeural">Alvaro (Male)</option>
+      <option value="es-ES-XimenaMultilingualNeural">Ximena (Female, Multilingual)</option>
+      <option value="es-ES-TristanMultilingualNeural">Tristan (Male, Multilingual)</option>
+    </optgroup>
+    <optgroup label="🇲🇽 Spanish (Mexico)">
+      <option value="es-MX-DaliaNeural">Dalia (Female)</option>
+      <option value="es-MX-JorgeNeural">Jorge (Male)</option>
+    </optgroup>
+    <optgroup label="🇫🇷 French">
+      <option value="fr-FR-DeniseNeural">Denise (Female)</option>
+      <option value="fr-FR-HenriNeural">Henri (Male)</option>
+      <option value="fr-FR-VivienneMultilingualNeural">Vivienne (Female, Multilingual)</option>
+      <option value="fr-FR-RemyMultilingualNeural">Remy (Male, Multilingual)</option>
+    </optgroup>
+    <optgroup label="🇩🇪 German">
+      <option value="de-DE-KatjaNeural">Katja (Female)</option>
+      <option value="de-DE-ConradNeural">Conrad (Male)</option>
+      <option value="de-DE-SeraphinaMultilingualNeural">Seraphina (Female, Multilingual)</option>
+    </optgroup>
+    <optgroup label="🇮🇹 Italian">
+      <option value="it-IT-ElsaNeural">Elsa (Female)</option>
+      <option value="it-IT-DiegoNeural">Diego (Male)</option>
+      <option value="it-IT-IsabellaMultilingualNeural">Isabella (Female, Multilingual)</option>
+    </optgroup>
+    <optgroup label="🇵🇹 Portuguese (Brazil)">
+      <option value="pt-BR-FranciscaNeural">Francisca (Female)</option>
+      <option value="pt-BR-AntonioNeural">Antonio (Male)</option>
+      <option value="pt-BR-ThalitaMultilingualNeural">Thalita (Female, Multilingual)</option>
+    </optgroup>
+    <optgroup label="🇯🇵 Japanese">
+      <option value="ja-JP-NanamiNeural">Nanami (Female)</option>
+      <option value="ja-JP-KeitaNeural">Keita (Male)</option>
+    </optgroup>
+    <optgroup label="🇨🇳 Chinese (Mandarin)">
+      <option value="zh-CN-XiaoxiaoNeural">Xiaoxiao (Female)</option>
+      <option value="zh-CN-YunxiNeural">Yunxi (Male)</option>
+      <option value="zh-CN-XiaoyiNeural">Xiaoyi (Female)</option>
+    </optgroup>
+    <optgroup label="🇰🇷 Korean">
+      <option value="ko-KR-SunHiNeural">SunHi (Female)</option>
+      <option value="ko-KR-InJoonNeural">InJoon (Male)</option>
+    </optgroup>
+    <optgroup label="🇮🇳 Hindi">
+      <option value="hi-IN-SwaraNeural">Swara (Female)</option>
+      <option value="hi-IN-MadhurNeural">Madhur (Male)</option>
+    </optgroup>
+  </select><br />
+  <br />
+
+  <h2 style="background-color: white; width: 300px;">Avatar Configuration</h2>
+  <label style="font-size: medium;" for="talkingAvatarCharacter">Avatar Character:</label>
+  <select id="talkingAvatarCharacter" style="font-size: medium;" onchange="window.updateAvatarStyles()">
+    <option value="harry">Harry</option>
+    <option value="jeff">Jeff</option>
+    <option value="lisa" selected>Lisa</option>
+    <option value="lori">Lori</option>
+    <option value="max">Max</option>
+    <option value="meg">Meg</option>
+  </select><br />
+  <label style="font-size: medium;" for="talkingAvatarStyle">Avatar Style:</label>
+  <select id="talkingAvatarStyle" style="font-size: medium;">
+    <option value="casual-sitting" selected>Casual Sitting</option>
+  </select>
+  <span style="font-size: small; color: #666;">&nbsp;(3D avatars for real-time chat)</span><br />
+  <label style="font-size: medium;" for="backgroundColor">Background Color:</label>
+  <input id="backgroundColor" type="text" size="16" style="font-size: medium;" value="#FFFFFFFF"></input><br />
+  <label style="font-size: medium;" for="backgroundImageUrl">Background Image (URL):</label>
+  <input id="backgroundImageUrl" type="text" size="64" style="font-size: medium;" placeholder="https://www.example.com/1920-1080-image.jpg" value=""></input><br />
+  <div style="background-color: white; width: 400px;">
+    <input type="checkbox" id="customizedAvatar" onchange="window.updateCustomAvatarBox()">Custom Avatar</input>
+    <input type="checkbox" id="useBuiltInVoice" style="width: 12px;" disabled>Use Built-In Voice</input><br /> 
+    <input type="checkbox" id="videoCrop">Video Crop</input><br />
+    <input type="checkbox" id="showSubtitles">Show Subtitles</input><br />
+  </div>
+  <br />
+</div>
+
+<h2 style="background-color: white; width: 300px;">Avatar Control Panel</h2>
+
+<!-- Control Buttons -->
+<div style="margin-bottom: 20px;">
+  <button id="restartSession" onclick="window.restartSession()" style="background-color: #ff9800;">🔄 Restart Session</button>
+  <button id="stopSession" onclick="window.stopSession()" style="background-color: #f44336; color: white;">⏹️ Stop Session</button>
+  <button id="stopSpeaking" onclick="window.stopSpeaking()" disabled="disabled">⏸️ Stop Speaking</button>
+  <button id="restartChat" onclick="window.restartChat()" style="background-color: #4CAF50;">🔄 Restart Chat</button>
+</div>
+<div id="sessionStatus" style="padding: 10px; background-color: #e3f2fd; border-radius: 4px; font-size: 12px; margin-bottom: 10px;">
+  <span id="statusText">⏳ Initializing avatar session...</span>
+</div>
+<div id="modeStatus" style="padding: 10px; border-radius: 4px; font-size: 12px; margin-top: 10px;" hidden></div>
+
+<!-- Avatar Video - Centered -->
+<div style="display: flex; justify-content: center; margin-bottom: 20px;">
+  <div id="videoContainer" style="position: relative; max-width: 960px; width: 100%;">
+    <h2 id="videoLabel" style="background-color: white; text-align: center;">Avatar Video</h2>
+    <div id="overlayArea" style="position: absolute; top: 80px; left: 20px; z-index: 10;" hidden="hidden">
+      <p id="overlayText" style="font-size: large; background-color: rgba(255,0,0,0.8); color: white; padding: 5px 10px; border-radius: 4px; margin: 0;">🔴 Live</p>
+    </div>
+    <div id="remoteVideo" style="text-align: center;"></div>
+    <div id="subtitles" style="
+          width: 100%;
+          text-align: center;
+          color: white; 
+          text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+          position: absolute; 
+          bottom: 5%; 
+          z-index: 999;" hidden></div>
+  </div>
+</div>
+
+<!-- Chat Interface -->
+<div id="chatInterface" style="background-color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; max-width: 960px; margin-left: auto; margin-right: auto;">
+  <h3 style="margin-top: 0;">💬 Chat History</h3>
+  <div id="chatHistory" style="
+    max-height: 400px; 
+    overflow-y: auto; 
+    border: 1px solid #ccc; 
+    border-radius: 4px; 
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+  "></div>
+  <div style="display: flex; gap: 10px;">
+    <input 
+      id="chatInput" 
+      type="text" 
+      placeholder="Type your question here..." 
+      style="flex: 1; padding: 10px; font-size: 14px; border: 2px solid #0078d4; border-radius: 4px;"
+      onkeypress="if(event.key==='Enter') window.sendChatMessage()"
+    />
+    <button 
+      id="pushToTalk" 
+      onmousedown="window.startRecording()" 
+      onmouseup="window.stopRecording()" 
+      ontouchstart="window.startRecording()" 
+      ontouchend="window.stopRecording()"
+      disabled
+      style="padding: 10px 20px; background-color: #28a745; color: white; font-size: 20px; border-radius: 50%; width: 50px; height: 50px; cursor: pointer;"
+      title="Hold to speak"
+    >🎤</button>
+    <button id="sendChat" onclick="window.sendChatMessage()" disabled style="padding: 10px 20px; background-color: #0078d4;">Send</button>
+  </div>
+</div>
+
+<!-- Knowledge Base Section -->
+<div id="knowledgeBase" style="background-color: white; padding: 20px; border-radius: 8px; margin-top: 20px; margin-bottom: 20px; max-width: 960px; margin-left: auto; margin-right: auto;">
+  <h2 style="background-color: white; width: 300px;">📚 Knowledge Base</h2>
+  <div style="margin-bottom: 15px;">
+    <label for="fileUpload" style="font-size: medium;">Upload Document:</label>
+    <input type="file" id="fileUpload" accept=".txt,.pdf,.docx,.md" style="font-size: medium;" />
+    <button id="uploadBtn" onclick="window.uploadDocument()" style="margin-left: 10px;">📤 Upload</button>
+  </div>
+  <div id="uploadStatus" style="margin-top: 10px; padding: 10px; border-radius: 4px;" hidden></div>
+  <div id="documentsList" style="margin-top: 15px;">
+    <h3 style="font-size: 14px;">Uploaded Documents:</h3>
+    <div id="docsContainer" style="max-height: 150px; overflow-y: auto; font-size: 12px;"></div>
+  </div>
+</div>
+<br/>
+
+<h2 style="background-color: white; width: 300px;">📋 Logs</h2>
+<div id="logging" style="background-color: white;"></div>
+
+<footer style="text-align: center; margin-top: 40px; padding: 20px; color: #666;">
+  <p>Azure Talking Avatar Demo - Powered by Azure Speech Services</p>
+  <p style="font-size: 12px;">Region: East US | Resource: aibcnhubavatarpoc</p>
+</footer>
+</body>
+</html>

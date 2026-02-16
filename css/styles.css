@@ -1,0 +1,127 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 20px;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: #0078d4;
+    margin-top: 20px;
+    padding: 10px;
+}
+
+#configuration {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+#azureSpeechResource {
+    margin-bottom: 15px;
+}
+
+#azureSpeechResource > div {
+    margin: 10px 20px 10px 0;
+}
+
+label {
+    display: inline-block;
+    margin-right: 10px;
+    font-weight: 500;
+}
+
+input[type="text"],
+input[type="password"],
+select,
+textarea {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 5px 0;
+}
+
+input[type="checkbox"] {
+    margin-right: 5px;
+    width: 16px;
+    height: 16px;
+}
+
+textarea {
+    width: 100%;
+    max-width: 600px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+button {
+    background-color: #0078d4;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 5px 5px 5px 0;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+button:hover:not(:disabled) {
+    background-color: #005a9e;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#videoContainer {
+    background-color: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+#remoteVideo {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#remoteVideo video {
+    max-width: 100%;
+    height: auto;
+}
+
+#logging {
+    padding: 15px;
+    border-radius: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    border: 1px solid #ddd;
+}
+
+#subtitles {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+#overlayText {
+    color: red;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px;
+}
